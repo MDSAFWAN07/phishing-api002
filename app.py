@@ -4,7 +4,6 @@ import numpy as np
 
 app = Flask(__name__)
 
-# Load the trained model (make sure model file is uploaded to same repo)
 model = tf.keras.models.load_model("phishing_lstm_model.h5")
 
 @app.route("/", methods=["GET"])
@@ -19,5 +18,6 @@ def predict():
     label = int(prediction > 0.5)
     return jsonify({"prediction": label})
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# 👇 DO NOT include app.run() when using gunicorn
+# if __name__ == "__main__":
+#     app.run(debug=True)
