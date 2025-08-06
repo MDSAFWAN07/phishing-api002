@@ -11,7 +11,6 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.get_json()
-    
     # Dummy model logic for now
     features = [data.get("feature1"), data.get("feature2"), data.get("feature3"), data.get("feature4"), data.get("feature5")]
     prediction = "Phishing" if sum(features) > 1.5 else "Legitimate"
