@@ -10,9 +10,14 @@ def home():
 # Prediction route
 @app.route('/predict', methods=['POST'])
 def predict():
-    data = request.get_json()
+    data = request.get_json()  # Make sure this is get_json()
     # Dummy model logic for now
     features = [data.get("feature1"), data.get("feature2"), data.get("feature3"), data.get("feature4"), data.get("feature5")]
     prediction = "Phishing" if sum(features) > 1.5 else "Legitimate"
 
     return jsonify({"prediction": prediction})
+
+if __name__ == "__main__":
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
