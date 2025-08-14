@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: phishing-deploy
+    name: phishing-deploy-success
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app --bind 0.0.0.0:$PORT"
+    startCommand: "gunicorn -w 1 -k gthread -b 0.0.0.0:$PORT app:app"
