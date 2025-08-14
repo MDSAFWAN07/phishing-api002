@@ -28,41 +28,45 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Phishing Detection API is Live!"
+    return "✅ Phishing Detection API is Live!"
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    data = request.get_json()
-    url = data.get("url", "")
+    try:
+        data = request.get_json()
+        url = data.get("url", "")
 
-    if not url:
-        return jsonify({"error": "URL is required"}), 400
+        if not url:
+            return jsonify({"error": "URL is required"}), 400
 
-    # Extract & scale
-    features = extract_features(url)
-    df_features = pd.DataFrame([features], columns=feature_names)
-    scaled_features = scaler.transform(df_features.values)
+        # Extract & scale
+        features = extract_features(url)
+        df_features = pd.DataFrame([features], columns=feature_names)
+        scaled_features = scaler.transform(df_features.values)
 
-    # Prediction
-    proba = model.predict_proba(scaled_features)[0]
-    phishing_confidence = proba[1]
-    legit_confidence = proba[0]
+        # Prediction
+        proba = model.predict_proba(scaled_features)[0]
+        phishing_confidence = proba[1]
+        legit_confidence = proba[0]
 
-    if phishing_confidence > 0.85:
-        label = "Phishing"
-        confidence = phishing_confidence
-    elif legit_confidence < 0.84:
-        label = "Legitimate"
-        confidence = legit_confidence
-    else:
-        label = "Uncertain"
-        confidence = max(phishing_confidence, legit_confidence)
+        if phishing_confidence > 0.85:
+            label = "Phishing"
+            confidence = phishing_confidence
+        elif legit_confidence > 0.84:
+            label = "Legitimate"
+            confidence = legit_confidence
+        else:
+            label = "Uncertain"
+            confidence = max(phishing_confidence, legit_confidence)
 
-    return jsonify({
-        "url": url,
-        "prediction": label,
-        "confidence": round(float(confidence), 4)
-    })
+        return jsonify({
+            "url": url,
+            "prediction": label,
+            "confidence": round(float(confidence), 4)
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     import os
